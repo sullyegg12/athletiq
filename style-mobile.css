@@ -1,10 +1,3 @@
-/* ===========================
-   MOBILE OVERRIDE — no phone frame
-   Paste this in style-mobile.css
-   and link it instead of style.css
-   when deploying to real iPhone
-   =========================== */
-
 html, body {
     display: block;
     background: var(--bg);
@@ -14,24 +7,53 @@ html, body {
 
 #app {
     width: 100%;
-    height: 100dvh;
+    height: auto;
+    min-height: 100dvh;
     max-height: none;
     max-width: none;
     border-radius: 0;
     box-shadow: none;
+    overflow: visible;
 }
 
 #app::before {
-    display: none; /* hide fake notch */
+    display: none;
 }
 
 #tab-bar {
-    border-radius: 0; /* no curved corners on real phone */
+    border-radius: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    height: calc(var(--tab-height) + env(safe-area-inset-bottom));
+}
+
+#global-settings-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 150;
+}
+
+.nav-header {
+    padding-top: 16px;
+    padding-right: 52px;
+}
+
+.sports-section-header {
+    top: 52px;
+}
+
+.panel {
+    overflow: visible;
+    padding-bottom: calc(var(--tab-height) + env(safe-area-inset-bottom) + 8px);
 }
 
 .phone-frame,
 .phone-frame::before,
 .phone-frame::after {
-    all: unset; /* strip the entire outer frame */
+    all: unset;
     display: contents;
 }
