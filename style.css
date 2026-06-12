@@ -1644,4 +1644,22 @@ body.dark-mode .goal-input-number {
     .nav-header {
         padding-top: 0;
     }
+    /* Fix settings button - move it to top right properly */
+    #global-settings-btn {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 150;
+    }
+
+    /* Fix the nav header so settings button doesn't overlap title */
+    .nav-header {
+        padding-top: 16px;
+        padding-right: 52px; /* stops title going under settings button */
+    }
+
+    /* Fix Fall/Winter/Spring sticky headers - they were sticking at 78px (phone frame offset) */
+    .sports-section-header {
+        top: 52px; /* lines up with the nav header height on real phone */
+    }
 }
