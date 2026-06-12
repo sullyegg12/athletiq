@@ -1642,6 +1642,6 @@ body.dark-mode .goal-input-number {
         display: contents;
     }
     .nav-header {
-        padding-top: 16px;
+        padding-top: 0;
     }
 }
