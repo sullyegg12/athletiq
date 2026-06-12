@@ -1641,4 +1641,7 @@ body.dark-mode .goal-input-number {
         all: unset;
         display: contents;
     }
+    .nav-header {
+        padding-top: 16px;
+    }
 }
