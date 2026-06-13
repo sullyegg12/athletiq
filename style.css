@@ -1,36 +1,36 @@
 :root {
-    --brand-blue:  #2663EB;
-    --brand-navy:  #0B2D79;
-    --brand-light: #E6EEFF;
+    --brand-blue: #2663EB;
+    --brand-navy: #0B2D79;
+    --brand-light: #E6EFFF;
     --brand-light-35: rgba(230, 238, 255, 0.35);
     --brand-blue-12: rgba(38, 99, 235, 0.12);
     --brand-blue-15: rgba(38, 99, 235, 0.15);
     --brand-blue-30: rgba(38, 99, 235, 0.30);
-    --bg:          #f5f7fb;
-    --surface:     #ffffff;
+    --bg: #f5f7fb;
+    --surface: #ffffff;
     --secondary-bg: #f0f0f5;
-    --tertiary-bg:  #e8e8ef;
-    --text:        #111827;
+    --tertiary-bg: #e8e8ef;
+    --text: #111827;
     --text-secondary: #6b7280;
-    --green:       #22c55e;
-    --red:         #ef4444;
-    --orange:      #f97316;
-    --teal:        #14b8a6;
-    --purple:      #a855f7;
-    --brown:       #92400e;
-    --radius-sm:   8px;
-    --radius-md:   12px;
-    --radius-lg:   20px;
-    --shadow-sm:   0 2px 4px rgba(0,0,0,0.08);
-    --shadow-md:   0 4px 12px rgba(0,0,0,0.12);
-    --tab-height:  64px;
+    --green: #22c55e;
+    --red: #ef4444;
+    --orange: #197316;
+    --teal: #14b8a6;
+    --purple: #a855f7;
+    --brown: #92400e;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+    --tab-height: 64px;
     --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* ===========================
-   RESET & BASE
-   =========================== */
-*, *::before, *::after {
+/* ==========================================================================
+   RESET & TRUE MOBILE LAYOUT (Combined from App 4)
+   ========================================================================== */
+*::before, *::after, * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -39,127 +39,70 @@
 html, body {
     height: 100%;
     font-family: var(--font);
-    background: #707070;
+    background: var(--bg); /* Native phone background background color */
     color: var(--text);
     font-size: 16px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block; /* Removed flex alignment centering */
     min-height: 100dvh;
 }
 
-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-family: var(--font);
-    font-size: 14px;
-}
-
-input, select {
-    font-family: var(--font);
-    font-size: 14px;
-}
-
-/* ===========================
-   APP LAYOUT
-   =========================== */
+/* Native full screen container instead of desktop device frame mockup */
 #app {
     display: flex;
     flex-direction: column;
-    width: 440px;
-    height: 956px;
-    max-height: 95dvh;
-    max-width: 95vw;
+    width: 100%;
+    height: auto;
+    min-height: 100dvh;
+    max-height: none;
+    max-width: none;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
     position: relative;
-    background: var(--bg);
-    border-radius: 50px;
-    overflow: hidden;
-    box-shadow:
-            0 0 0 2px #121212,
-            0 0 0 7px #252525,
-            0 0 0 10px #000000,
-            0 60px 140px rgba(32, 32, 32, 0.8);
 }
 
 #app::before {
-    content: '';
-    position: absolute;
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    height: 34px;
-    background: #000;
-    border-radius: 20px;
-    z-index: 999;
+    display: none; /* Disables the virtual dynamic island / notch shape */
 }
 
+/* Stripping away phone-frame desktop elements completely */
+phone-frame, phone-frame::before, phone-frame::after {
+    all: unset;
+    display: contents;
+}
+
+/* ==========================================================================
+   APP COMPONENTS
+   ========================================================================== */
 .panel {
     display: none;
     flex: 1;
     overflow-y: auto;
-    padding-bottom: calc(var(--tab-height) + 8px);
+    /* Added padding to clear bottom navigation bar plus phone safe zone gaps */
+    padding-bottom: calc(var(--tab-height) + env(safe-area-inset-bottom) + 16px);
 }
 
 .panel.active {
     display: block;
 }
 
-.phone-frame {
-    position: relative;
-    overflow: hidden;
-    border-radius: 54px;
-    padding: 6px;
-    background: linear-gradient(145deg, #2a2a2a, #000000, #1a1a1a, #000000, #222222);
-    box-shadow:
-            0 0 0 1px #111,
-            0 1px 10px rgba(0,0,0,0.7);
-}
-
-.phone-frame::before {
-    content: '';
-    position: absolute;
-    right: -4px;
-    top: 160px;
-    width: 4px;
-    height: 70px;
-    background: linear-gradient(to right, #111, #333, #111);
-    border-radius: 0 3px 3px 0;
-}
-
-.phone-frame::after {
-    content: '';
-    position: absolute;
-    left: -4px;
-    top: 130px;
-    width: 4px;
-    height: 40px;
-    background: linear-gradient(to left, #111, #333, #111);
-    border-radius: 3px 0 0 3px;
-    box-shadow: 0 58px 0 #222, 0 108px 0 #222;
-}
-
-/* ===========================
-   TAB BAR
-   =========================== */
 #tab-bar {
-    position: absolute;
+    position: fixed; /* Sticks to bottom of physical view screen always */
     bottom: 0;
     left: 0;
     right: 0;
     width: 100%;
-    height: var(--tab-height);
     background: var(--brand-navy);
     display: flex;
     align-items: center;
     justify-content: space-around;
     z-index: 100;
     border-top: 1px solid rgba(255,255,255,0.08);
-    border-radius: 0 0 44px 44px;
-    padding-bottom: 8px;
+    border-radius: 0; /* Flat edge bottom for full-bleed display integration */
+    padding-bottom: env(safe-area-inset-bottom); /* Clears physical iPhone indicator bar */
+    height: calc(var(--tab-height) + env(safe-area-inset-bottom));
 }
 
 .tab-btn {
@@ -167,7 +110,7 @@ input, select {
     flex-direction: column;
     align-items: center;
     gap: 3px;
-    color: rgba(250, 250, 250);
+    color: rgba(250, 250, 250, 0.6);
     flex: 1;
     padding: 6px 0;
     transition: color 0.15s;
@@ -188,6 +131,69 @@ input, select {
     color: var(--brand-blue);
 }
 
+#global-settings-btn {
+    position: fixed;
+    top: calc(16px + env(safe-area-inset-top));
+    right: 16px;
+    z-index: 150;
+    font-size: 20px;
+    color: var(--brand-navy);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Buttons, inputs */
+button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font);
+    font-size: 14px;
+}
+
+input, select {
+    font-family: var(--font);
+    font-size: 14px;
+}
+
+.add-game-btn:hover {
+    background: var(--brand-navy);
+}
+
+/* ==========================================================================
+   FIXED PROFILE SPORTS CHIPS (Cleaned and explicitly verified syntax)
+   ========================================================================== */
+.profile-sports-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.profile-sport-chip {
+    background: var(--brand-blue-12);
+    border: 1px solid var(--brand-blue-15);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--brand-blue); /* Added for fallback text coloring visibility */
+}
+
+.profile-sport-chip-positions {
+    display: block;
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+/* Include remaining individual layout pieces below (e.g. .avatar-circle, .profile-row, etc. from App 1 unchanged) */
+
 /* ===========================
    NAVIGATION HEADER
    =========================== */
@@ -195,7 +201,7 @@ input, select {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 58px 16px 10px;
+    padding: calc(16px + env(safe-area-inset-top)) 16px 10px; /* Accounts for status bar icons */
     background: var(--surface);
     border-bottom: 1px solid rgba(0,0,0,0.06);
     position: sticky;
@@ -649,33 +655,6 @@ input, select {
 
 .add-game-btn:hover { background: var(--brand-navy); }
 
-/* ===========================
-   PROFILE SPORTS CHIPS
-   =========================== */
-.profile-sports-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: center;
-    margin-top: 8px;
-}
-
-.profile-sport-chip {
-    background: var(--brand-blue-12);
-    border: 1px solid var(--brand-blue-15);
-    border-radius: 8px;
-    padding: 6px 10px;
-    font-size: 12px;
-    font-weight: 600;
-    text-align: center;
-}
-
-.profile-sport-chip-positions {
-    display: block;
-    font-size: 10px;
-    color: var(--text-secondary);
-    margin-top: 2px;
-}
 
 /* ===========================
    SPORT SETUP SCREEN
