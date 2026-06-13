@@ -650,6 +650,34 @@ input, select {
 .add-game-btn:hover { background: var(--brand-navy); }
 
 /* ===========================
+   PROFILE SPORTS CHIPS
+   =========================== */
+.profile-sports-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.profile-sport-chip {
+    background: var(--brand-blue-12);
+    border: 1px solid var(--brand-blue-15);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.profile-sport-chip-positions {
+    display: block;
+    font-size: 10px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+/* ===========================
    PROFILE VIEW
    =========================== */
 #panel-profile .page-scroll {
