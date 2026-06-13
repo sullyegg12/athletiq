@@ -1169,39 +1169,41 @@ function openSportSetup(sport) {
     const positions = getPositions(sport);
 
     function renderSetup() {
-        document.getElementById('modal-title').textContent = `Set Up — ${sport}`;
+        document.getElementById('modal-title').textContent = `${getIcon(sport)} ${sport}`;
         document.getElementById('modal-body').innerHTML = `
-        <div class="form-section">
-            <div class="form-section-title">Active Years</div>
-            <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px;">
+        <div class="setup-section">
+            <div class="setup-section-title">Active Years</div>
+            <div class="setup-option-list">
                 ${availSeasons.map(yr => `
-                    <div class="sport-row" style="padding:10px 0;border:none;"
-                         onclick="toggleSetupYear(${yr})">
-                        <span class="sport-row-name">
-                            ${seasonLabel(yr)}
-                            <span style="font-size:12px;color:var(--text-secondary);margin-left:6px;">
-                                ${gradeLabel(yr, state.gradYear)}
-                            </span>
-                        </span>
-                        <div class="sport-check ${selectedYears.has(yr) ? 'checked' : ''}"
-                             id="year-check-${yr}"></div>
+                    <div class="setup-option-row" onclick="toggleSetupYear(${yr})">
+                        <div class="setup-option-label">
+                            <span class="setup-option-main">${seasonLabel(yr)}</span>
+                            <span class="setup-option-sub">${gradeLabel(yr, state.gradYear)}</span>
+                        </div>
+                        <div class="sport-check ${selectedYears.has(yr) ? 'checked' : ''}"></div>
                     </div>`).join('')}
             </div>
         </div>
         ${positions.length > 0 ? `
-        <div class="form-section">
-            <div class="form-section-title">Position(s)</div>
-            <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px;">
+        <div class="setup-section">
+            <div class="setup-section-title">Position(s)</div>
+            <div class="setup-option-list">
                 ${positions.map(pos => `
-                    <div class="sport-row" style="padding:10px 0;border:none;"
-                         onclick="toggleSetupPosition('${pos}')">
-                        <span class="sport-row-name">${pos}</span>
-                        <div class="sport-check ${selectedPositions.has(pos) ? 'checked' : ''}"
-                             id="pos-check-${pos.replace(/[^a-zA-Z0-9]/g,'-')}"></div>
+                    <div class="setup-option-row" onclick="toggleSetupPosition('${pos.replace(/'/g, "\\'")}')">
+                        <span class="setup-option-main">${pos}</span>
+                        <div class="sport-check ${selectedPositions.has(pos) ? 'checked' : ''}"></div>
                     </div>`).join('')}
             </div>
         </div>` : ''}
-        <div style="height:24px;"></div>
+        ${state.selectedSports.has(sport) ? `
+        <div class="setup-section">
+            <div class="setup-option-list">
+                <div class="setup-option-row setup-remove-row" onclick="removeSport('${sport}')">
+                    <span class="setup-option-main" style="color:var(--red);">Remove ${sport}</span>
+                </div>
+            </div>
+        </div>` : ''}
+        <div class="setup-bottom-spacer"></div>
         `;
 
         const saveBtn = document.getElementById('modal-save');
@@ -1229,6 +1231,15 @@ function openSportSetup(sport) {
         if (selectedPositions.has(pos)) selectedPositions.delete(pos);
         else selectedPositions.add(pos);
         renderSetup();
+    };
+
+    window.removeSport = (s) => {
+        state.selectedSports.delete(s);
+        delete state.sportConfig[s];
+        if (state.currentSport === s) state.currentSport = '';
+        saveState();
+        closeAddGame();
+        renderAll();
     };
 
     document.getElementById('modal-overlay').classList.remove('hidden');
