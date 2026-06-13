@@ -678,6 +678,76 @@ input, select {
 }
 
 /* ===========================
+   SPORT SETUP SCREEN
+   =========================== */
+.setup-section {
+    margin-bottom: 8px;
+}
+
+.setup-section-title {
+    padding: 12px 16px 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    background: var(--bg);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.setup-option-list {
+    background: var(--surface);
+}
+
+.setup-option-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: background 0.12s;
+}
+
+.setup-option-row:last-child {
+    border-bottom: none;
+}
+
+.setup-option-row:active {
+    background: var(--brand-light-35);
+}
+
+.setup-option-label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.setup-option-main {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.setup-option-sub {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.setup-remove-row {
+    justify-content: center;
+}
+
+.setup-bottom-spacer {
+    height: 24px;
+}
+
+body.dark-mode .setup-section-title {
+    background: var(--secondary-bg);
+}
+
+/* ===========================
    PROFILE VIEW
    =========================== */
 #panel-profile .page-scroll {
