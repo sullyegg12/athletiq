@@ -7,6 +7,145 @@ const TeamLevel = {
 
 const TEAM_LEVELS = ['JV2', 'JV1', 'Varsity Reserve', 'Varsity'];
 
+// =============================================================================
+//  MARK: - Position Definitions per Sport
+// =============================================================================
+function getPositions(sport) {
+    const map = {
+        'Basketball':   ['Point Guard','Shooting Guard','Small Forward','Power Forward','Center'],
+        'Football':     ['Quarterback','Running Back','Wide Receiver','Tight End','Offensive Line','Cornerback','Safety','Linebacker','Defensive Line','Kicker','Punter','Long Snapper'],
+        'Boys Soccer':  ['Goalkeeper','Defender','Midfielder','Forward'],
+        'Girls Soccer': ['Goalkeeper','Defender','Midfielder','Forward'],
+        'Volleyball':   ['Setter','Outside Hitter','Middle Blocker','Opposite Hitter','Libero','Defensive Specialist'],
+        'Baseball':     ['Pitcher','Catcher','First Base','Second Base','Third Base','Shortstop','Left Field','Center Field','Right Field','Designated Hitter'],
+        'Softball':     ['Pitcher','Catcher','First Base','Second Base','Third Base','Shortstop','Left Field','Center Field','Right Field','Designated Hitter'],
+        'Hockey':       ['Goalie','Defenseman','Center','Left Wing','Right Wing'],
+        'Lacrosse':     ['Goalie','Defender','Midfielder','Attacker','Face-Off Specialist'],
+        'Wrestling':    ['106','113','120','126','132','138','144','150','157','165','175','190','215','285'],
+        'Cross Country':['Runner'],
+        'Track & Field':['Sprinter','Distance','Jumper','Thrower','Hurdler','Relay','Pole Vault','Multi-Event'],
+        'Bowling':      ['Bowler'],
+        'Boys Golf':    ['Golfer'],
+        'Girls Golf':   ['Golfer'],
+        'Boys Tennis':  ['Singles','Doubles','Both'],
+        'Girls Tennis': ['Singles','Doubles','Both'],
+        'Gymnastics':   ['All-Around','Vault','Bars','Beam','Floor'],
+        'Swim & Dive Boys': ['Freestyle','Backstroke','Breaststroke','Butterfly','IM','Diver','Relay'],
+        'Girls Swim & Dive':['Freestyle','Backstroke','Breaststroke','Butterfly','IM','Diver','Relay'],
+        'Cheerleading': ['Flyer','Base','Back Spot','Tumbler','Stunter'],
+        'Dance':        ['Dancer'],
+        'Ski Racing':   ['Slalom','Giant Slalom','Super-G','Downhill'],
+        'Snowboarding': ['Halfpipe','Slopestyle','Giant Slalom','Cross'],
+    };
+    return map[sport] ?? [];
+}
+
+// Stats shown per position (keys must match entryLabel in getStatMappings)
+function getPositionStats(sport, positions) {
+    if (!positions || positions.length === 0) return null; // null = show all
+
+    const map = {
+        'Basketball': {
+            'Point Guard':     ['Points','Assists','Turnovers','Steals','FGM','FGA','3PM','3PA','FTM','FTA','Rebounds','Off Reb','Def Reb','Fouls','Plus/Minus','Minutes'],
+            'Shooting Guard':  ['Points','Assists','Steals','FGM','FGA','3PM','3PA','FTM','FTA','Rebounds','Fouls','Plus/Minus','Minutes'],
+            'Small Forward':   ['Points','Rebounds','Assists','Steals','Blocks','FGM','FGA','3PM','3PA','FTM','FTA','Fouls','Plus/Minus','Minutes'],
+            'Power Forward':   ['Points','Rebounds','Blocks','FGM','FGA','FTM','FTA','Off Reb','Def Reb','Fouls','Plus/Minus','Minutes'],
+            'Center':          ['Points','Rebounds','Blocks','FGM','FGA','FTM','FTA','Off Reb','Def Reb','Fouls','Plus/Minus','Minutes'],
+        },
+        'Football': {
+            'Quarterback':     ['Pass Yds','Pass TDs','Interceptions','Completions','Pass Attempts','Rush Yds','Rush Attempts','Rush TDs','Fumbles','Points'],
+            'Running Back':    ['Rush Yds','Rush Attempts','Rush TDs','Rec Yds','Receptions','Rec TDs','Fumbles','Points'],
+            'Wide Receiver':   ['Rec Yds','Receptions','Rec TDs','Rush Yds','Rush Attempts','Points'],
+            'Tight End':       ['Rec Yds','Receptions','Rec TDs','Points'],
+            'Offensive Line':  ['Points'],
+            'Cornerback':      ['Tackles','Solo Tackles','Assist Tackles','Def INTs','Pass Deflect','Forced Fum','Fum Recov','Def TDs'],
+            'Safety':          ['Tackles','Solo Tackles','Assist Tackles','Def INTs','Pass Deflect','Forced Fum','Fum Recov','Def TDs'],
+            'Linebacker':      ['Tackles','Solo Tackles','Assist Tackles','Sacks','TFL','Def INTs','Pass Deflect','Forced Fum','Fum Recov','Def TDs'],
+            'Defensive Line':  ['Tackles','Solo Tackles','Assist Tackles','Sacks','TFL','Forced Fum','Fum Recov','Def TDs'],
+            'Kicker':          ['Points','KR Yds'],
+            'Punter':          ['PR Yds','Points'],
+            'Long Snapper':    ['Points'],
+        },
+        'Boys Soccer': {
+            'Goalkeeper': ['Saves','Goals','Assists','Yellow Cards','Red Cards','Minutes'],
+            'Defender':   ['Goals','Assists','Shots','Yellow Cards','Red Cards','Minutes'],
+            'Midfielder': ['Goals','Assists','Shots','Shots on Goal','Yellow Cards','Red Cards','Minutes'],
+            'Forward':    ['Goals','Assists','Shots','Shots on Goal','Yellow Cards','Red Cards','Minutes'],
+        },
+        'Girls Soccer': {
+            'Goalkeeper': ['Saves','Goals','Assists','Yellow Cards','Red Cards','Minutes'],
+            'Defender':   ['Goals','Assists','Shots','Yellow Cards','Red Cards','Minutes'],
+            'Midfielder': ['Goals','Assists','Shots','Shots on Goal','Yellow Cards','Red Cards','Minutes'],
+            'Forward':    ['Goals','Assists','Shots','Shots on Goal','Yellow Cards','Red Cards','Minutes'],
+        },
+        'Volleyball': {
+            'Setter':               ['Assists','Aces','Digs','Points','Serve Errors'],
+            'Outside Hitter':       ['Kills','Errors','Attempts','Aces','Digs','Blocks','Points','Serve Errors'],
+            'Middle Blocker':       ['Kills','Errors','Attempts','Blocks','Block Errors','Points'],
+            'Opposite Hitter':      ['Kills','Errors','Attempts','Aces','Blocks','Block Errors','Points'],
+            'Libero':               ['Digs','Assists','Aces','Serve Errors','Points'],
+            'Defensive Specialist': ['Digs','Aces','Serve Errors','Points'],
+        },
+        'Baseball': {
+            'Pitcher':    ['IP','Hits Allow','ER','BB Allow','K','Wins','Losses','Putouts','Fielding Ast','Errors'],
+            'Catcher':    ['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'First Base': ['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'Second Base':['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'Third Base': ['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'Shortstop':  ['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'Left Field': ['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'Center Field':['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'Right Field':['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'Designated Hitter':['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts'],
+        },
+        'Softball': {
+            'Pitcher':    ['IP','Hits Allow','ER','BB Allow','K','Wins','Losses','Putouts','Fielding Ast','Errors'],
+            'Catcher':    ['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'First Base': ['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'Second Base':['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'Third Base': ['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'Shortstop':  ['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'Left Field': ['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'Center Field':['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'Right Field':['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts','Stolen Bases','Putouts','Fielding Ast','Errors'],
+            'Designated Hitter':['At Bats','Hits','Singles','Doubles','Triples','Home Runs','RBI','Runs','Walks','Strikeouts'],
+        },
+        'Hockey': {
+            'Goalie':     ['Saves','Goals','Assists','Penalty Min','Plus/Minus'],
+            'Defenseman': ['Goals','Assists','Shots','Hits','Blocks','Penalty Min','Plus/Minus','Faceoff W','Faceoff L'],
+            'Center':     ['Goals','Assists','Shots','Hits','Penalty Min','Plus/Minus','Faceoff W','Faceoff L'],
+            'Left Wing':  ['Goals','Assists','Shots','Hits','Penalty Min','Plus/Minus'],
+            'Right Wing': ['Goals','Assists','Shots','Hits','Penalty Min','Plus/Minus'],
+        },
+        'Lacrosse': {
+            'Goalie':             ['Saves','Goals','Assists','Turnovers'],
+            'Defender':           ['Ground Balls','Caused TO','Turnovers','Goals','Assists'],
+            'Midfielder':         ['Goals','Assists','Shots','Shots on Goal','Ground Balls','Caused TO','Turnovers','Faceoff W','Faceoff L'],
+            'Attacker':           ['Goals','Assists','Shots','Shots on Goal','Ground Balls','Turnovers'],
+            'Face-Off Specialist':['Faceoff W','Faceoff L','Ground Balls'],
+        },
+        'Volleyball': {
+            'Setter':               ['Assists','Aces','Digs','Points','Serve Errors'],
+            'Outside Hitter':       ['Kills','Errors','Attempts','Aces','Digs','Blocks','Points'],
+            'Middle Blocker':       ['Kills','Errors','Attempts','Blocks','Block Errors','Points'],
+            'Opposite Hitter':      ['Kills','Errors','Attempts','Aces','Blocks','Points'],
+            'Libero':               ['Digs','Assists','Aces','Serve Errors','Points'],
+            'Defensive Specialist': ['Digs','Aces','Serve Errors','Points'],
+        },
+    };
+
+    const sportMap = map[sport];
+    if (!sportMap) return null;
+
+    // Merge stats from all selected positions
+    const allStats = new Set();
+    for (const pos of positions) {
+        const posStats = sportMap[pos];
+        if (posStats) posStats.forEach(s => allStats.add(s));
+    }
+    return allStats.size > 0 ? Array.from(allStats) : null;
+}
+
 /** Returns a unique ID string */
 function uuid() {
     return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -23,6 +162,7 @@ function makeGame({ sport, opponent, yourScore, opponentScore, isWin, date = new
 const state = {
     gradYear:       new Date().getFullYear() + 1,
     selectedSports: new Set(),
+    sportConfig:    {},
     allGames:       [],
     activeSeason:   new Date().getFullYear(),
     activeTeam:     'Varsity',
@@ -65,6 +205,7 @@ function saveState() {
     const toSave = {
         gradYear:       state.gradYear,
         selectedSports: Array.from(state.selectedSports),
+        sportConfig: state.sportConfig,
         allGames:       state.allGames.map(g => ({ ...g, date: g.date.getTime() })),
         activeSeason:   state.activeSeason,
         activeTeam:     state.activeTeam,
@@ -83,6 +224,7 @@ function loadState() {
         const saved = JSON.parse(raw);
         state.gradYear       = saved.gradYear       ?? state.gradYear;
         state.selectedSports = new Set(saved.selectedSports ?? []);
+        state.sportConfig = saved.sportConfig ?? {};
         state.allGames       = (saved.allGames ?? []).map(g => ({ ...g, date: new Date(g.date) }));
         state.activeSeason   = saved.activeSeason   ?? state.activeSeason;
         state.activeTeam     = saved.activeTeam     ?? state.activeTeam;
@@ -418,7 +560,12 @@ function getStatMappings(sport) {
 
 /** Returns only non-calculated stat mappings */
 function getInputStats(sport) {
-    return getStatMappings(sport).filter(s => !s.isCalculated);
+    const all = getStatMappings(sport).filter(s => !s.isCalculated);
+    const config = state.sportConfig[sport];
+    if (!config || !config.positions || config.positions.length === 0) return all;
+    const allowed = getPositionStats(sport, config.positions);
+    if (!allowed) return all;
+    return all.filter(m => allowed.includes(m.entryLabel));
 }
 
 /** Calculates derived stats (Pass YPA, Rush YPC, Bowling %) */
@@ -886,10 +1033,12 @@ function gamePct(gameStats, madeKey, attKey) {
 //  MARK: - Filtered Games
 // =============================================================================
 function getFilteredGames(sport, filterSeason, filterTeam) {
+    const config = state.sportConfig[sport];
     return state.allGames.filter(g =>
         g.sport === sport &&
         (filterSeason == null || g.season === filterSeason) &&
-        (filterTeam   == null || g.team   === filterTeam)
+        (filterTeam == null || g.team === filterTeam) &&
+        (config == null || config.years.length === 0 || config.years.includes(g.season))
     ).sort((a, b) => b.date - a.date);
 }
 
@@ -907,7 +1056,7 @@ function renderHome() {
     panel.innerHTML = `
     <div class="nav-header">
         <div class="nav-header-logo">
-            <img src="./Images/Athletiq-Logo.png" class="brand-logo" />
+            <img src="./Images/Athletiq-Logo.png" class="brand-logo"/>
             <h1 style="font-size:32px;font-weight:900;color:var(--brand-navy);letter-spacing:-1px;">Athletiq</h1>
         </div>
     </div>
@@ -969,8 +1118,17 @@ function renderSports() {
     const sportRowsHTML = (sports) => sports.map(sport => {
         const checked = state.selectedSports.has(sport);
         return `
-      <div class="sport-row" onclick="toggleSport('${sport}')">
-        <span class="sport-row-name">${getIcon(sport)} ${sport}</span>
+      <div class="sport-row" onclick="${state.selectedSports.has(sport) ? `openSportSetup('${sport}')` : `toggleSport('${sport}')`}">
+        <span class="sport-row-name">
+            ${getIcon(sport)} ${sport}
+            ${state.selectedSports.has(sport) && state.sportConfig[sport] ? `
+                <span style="display:block;font-size:11px;color:var(--text-secondary);margin-top:2px;">
+                    ${state.sportConfig[sport].positions.length > 0
+                        ? state.sportConfig[sport].positions.join(', ')
+                        : 'No position set'}
+                    · ${state.sportConfig[sport].years.map(y => gradeLabel(y, state.gradYear)).join(', ')}
+                </span>` : ''}
+        </span>
         <div class="sport-check ${checked ? 'checked' : ''}"></div>
       </div>`;
     }).join('');
@@ -994,12 +1152,87 @@ function renderSports() {
 function toggleSport(sport) {
     if (state.selectedSports.has(sport)) {
         state.selectedSports.delete(sport);
+        delete state.sportConfig[sport];
+        saveState();
+        renderAll();
     } else {
-        state.selectedSports.add(sport);
-        if (!state.currentSport) state.currentSport = sport;
+        // Open setup screen instead of immediately adding
+        openSportSetup(sport);
     }
-    saveState();   // add this
-    renderAll();
+}
+
+function openSportSetup(sport) {
+    const availSeasons = seasons(state.gradYear);
+    const existing = state.sportConfig[sport] || { years: [], positions: [] };
+    let selectedYears = new Set(existing.years);
+    let selectedPositions = new Set(existing.positions);
+    const positions = getPositions(sport);
+
+    function renderSetup() {
+        document.getElementById('modal-title').textContent = `Set Up — ${sport}`;
+        document.getElementById('modal-body').innerHTML = `
+        <div class="form-section">
+            <div class="form-section-title">Active Years</div>
+            <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px;">
+                ${availSeasons.map(yr => `
+                    <div class="sport-row" style="padding:10px 0;border:none;"
+                         onclick="toggleSetupYear(${yr})">
+                        <span class="sport-row-name">
+                            ${seasonLabel(yr)}
+                            <span style="font-size:12px;color:var(--text-secondary);margin-left:6px;">
+                                ${gradeLabel(yr, state.gradYear)}
+                            </span>
+                        </span>
+                        <div class="sport-check ${selectedYears.has(yr) ? 'checked' : ''}"
+                             id="year-check-${yr}"></div>
+                    </div>`).join('')}
+            </div>
+        </div>
+        ${positions.length > 0 ? `
+        <div class="form-section">
+            <div class="form-section-title">Position(s)</div>
+            <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px;">
+                ${positions.map(pos => `
+                    <div class="sport-row" style="padding:10px 0;border:none;"
+                         onclick="toggleSetupPosition('${pos}')">
+                        <span class="sport-row-name">${pos}</span>
+                        <div class="sport-check ${selectedPositions.has(pos) ? 'checked' : ''}"
+                             id="pos-check-${pos.replace(/[^a-zA-Z0-9]/g,'-')}"></div>
+                    </div>`).join('')}
+            </div>
+        </div>` : ''}
+        <div style="height:24px;"></div>
+        `;
+
+        const saveBtn = document.getElementById('modal-save');
+        saveBtn.disabled = selectedYears.size === 0;
+        saveBtn.onclick = () => {
+            state.selectedSports.add(sport);
+            state.sportConfig[sport] = {
+                years: Array.from(selectedYears),
+                positions: Array.from(selectedPositions),
+            };
+            if (!state.currentSport) state.currentSport = sport;
+            saveState();
+            closeAddGame();
+            renderAll();
+        };
+    }
+
+    window.toggleSetupYear = (yr) => {
+        if (selectedYears.has(yr)) selectedYears.delete(yr);
+        else selectedYears.add(yr);
+        renderSetup();
+    };
+
+    window.toggleSetupPosition = (pos) => {
+        if (selectedPositions.has(pos)) selectedPositions.delete(pos);
+        else selectedPositions.add(pos);
+        renderSetup();
+    };
+
+    document.getElementById('modal-overlay').classList.remove('hidden');
+    renderSetup();
 }
 
 // =============================================================================
@@ -1408,7 +1641,23 @@ function renderProfile() {
         ? `<input class="profile-text-input" value="${p.playerName}" onchange="updateProfile('playerName', this.value)" />
              <input class="profile-text-input" value="${p.highSchool}" onchange="updateProfile('highSchool', this.value)" style="font-size:14px;" />`
         : `<div class="profile-name">${p.playerName}</div>
-             <div class="profile-school">${p.highSchool}</div>`}
+     <div class="profile-school">${p.highSchool}</div>
+     ${state.selectedSports.size > 0 ? `
+<div class="profile-sports-row">
+    ${Array.from(state.selectedSports).filter(sport => {
+            const config = state.sportConfig[sport];
+            if (!config || config.years.length === 0) return true;
+            return config.years.includes(state.activeSeason);
+        }).map(sport => {
+            const config = state.sportConfig[sport];
+            const positions = config && config.positions.length > 0
+                ? config.positions.join(' / ') : '';
+            return `<div class="profile-sport-chip">
+            ${getIcon(sport)} ${sport}
+            ${positions ? `<span class="profile-sport-chip-positions">${positions}</span>` : ''}
+        </div>`;
+        }).join('')}
+</div>` : ''}`}
         <button class="edit-toggle-btn" onclick="toggleProfileEdit()">
           ${ed ? '✓ Done' : '️Edit Profile'}
         </button>
