@@ -1058,8 +1058,7 @@ function renderHome() {
         .sort((a, b) => b.date - a.date);
 
     // Separate golf from other sports for record calculation
-    const nonGolfGames = allGames.filter(g => !g.sport.includes('Golf'));
-    const golfGames    = allGames.filter(g => g.sport.includes('Golf'));
+    const nonGolfGames = allGames.filter(g => !g.sport.includes('Golf'));          
 
     const wins   = nonGolfGames.filter(g => g.isWin).length;
     const losses = nonGolfGames.length - wins;
@@ -1106,10 +1105,9 @@ function renderHome() {
 
       <div class="section-title">Recent Activity</div>
 
-      ${games.length === 0
-        ? `<div class="empty-state">No activity yet. Add a sport and log a game to get started!</div>`
-        : `<div class="activity-list">${games.map(g => `
-            <div class="activity-row" onclick="openGameDetail('${g.id}')">
+      ${allGames.length === 0
+    ? `<div class="empty-state">No activity yet...
+    : `<div class="activity-list">${allGames.map(g => `  <div class="activity-row" onclick="openGameDetail('${g.id}')">
               <div class="activity-icon">${getIcon(g.sport)}</div>
               <div class="activity-info">
                 <div class="activity-sport">${g.sport}</div>
