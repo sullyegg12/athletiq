@@ -1739,4 +1739,8 @@ body.dark-mode .goal-input-number {
     .sports-section-header {
         top: 52px; /* lines up with the nav header height on real phone */
     }
+    .activity-icon i,
+    .activity-icon .fi {
+        color: var(--brand-blue);
+    }
 }
