@@ -1125,7 +1125,7 @@ function renderSports() {
         return `
       <div class="sport-row" onclick="${state.selectedSports.has(sport) ? `openSportSetup('${sport}')` : `toggleSport('${sport}')`}">
         <span class="sport-row-name">
-            ${getIcon(sport)} ${sport}
+            ${sport}
             ${state.selectedSports.has(sport) && state.sportConfig[sport] ? `
                 <span style="display:block;font-size:11px;color:var(--text-secondary);margin-top:2px;">
                     ${state.sportConfig[sport].positions.length > 0
@@ -1297,7 +1297,8 @@ function renderStats() {
     const sportPills = sports.length > 0
         ? `<div class="sport-pills-row">${sports.map(s => `
         <button class="pill-btn ${state.currentSport === s ? 'active' : ''}" onclick="setCurrentSport('${s}')">
-          ${getIcon(s)} ${s}
+            ${s}
+        </button>
         </button>`).join('')}</div>` : '';
 
     // Dashboard content
@@ -1452,7 +1453,6 @@ function renderDashboard(sport, filteredGames, filterTitle) {
       <div class="activity-list">
         ${filteredGames.map(g => `
           <div class="activity-row" onclick="openGameDetail('${g.id}')">
-            <div class="activity-icon">${getIcon(g.sport)}</div>
             <div class="activity-info">
               <div class="activity-sport">${g.sport.includes('Golf') ? '' : (g.isWin ? '✅ ' : '❌ ')}vs ${g.opponent}</div>
               <div class="activity-desc">${g.yourScore}–${g.opponentScore} · ${g.team}</div>
@@ -1678,7 +1678,7 @@ function renderProfile() {
             const positions = config && config.positions.length > 0
                 ? config.positions.join(' / ') : '';
             return `<div class="profile-sport-chip">
-            ${getIcon(sport)} ${sport}
+                 ${sport}
             ${positions ? `<span class="profile-sport-chip-positions">${positions}</span>` : ''}
         </div>`;
         }).join('')}
@@ -1823,7 +1823,6 @@ function openGameDetail(gameId) {
     document.getElementById('detail-title').textContent = game.sport;
     document.getElementById('detail-body').innerHTML = `
     <div class="detail-hero">
-      <div class="detail-sport-icon">${getIcon(game.sport)}</div>
       <div class="detail-result ${game.isWin ? 'win' : 'loss'}">${game.isWin ? 'Victory' : 'Tough Loss'}</div>
       <div class="detail-score-row">
         <div class="detail-score-team">
