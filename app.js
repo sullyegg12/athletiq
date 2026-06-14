@@ -1052,12 +1052,24 @@ function getFilteredGames(sport, filterSeason, filterTeam) {
 // =============================================================================
 function renderHome() {
     const panel = document.getElementById('panel-home');
-    const games = state.allGames.filter(g => state.selectedSports.has(g.sport)).sort((a,b) => b.date - a.date);
-    const wins   = games.filter(g => g.isWin).length;
-    const losses = games.length - wins;
-    const winPct = games.length ? ((wins / games.length) * 100).toFixed(1) : '0.0';
-    const seasonStr = `${currentSeasonName()} Season • ${seasonLabel(state.activeSeason)} ${state.activeTeam}`;
+    
+    const allGames = state.allGames
+        .filter(g => state.selectedSports.has(g.sport))
+        .sort((a, b) => b.date - a.date);
 
+    // Separate golf from other sports for record calculation
+    const nonGolfGames = allGames.filter(g => !g.sport.includes('Golf'));
+    const golfGames    = allGames.filter(g => g.sport.includes('Golf'));
+
+    const wins   = nonGolfGames.filter(g => g.isWin).length;
+    const losses = nonGolfGames.length - wins;
+    const winPct = nonGolfGames.length 
+        ? ((wins / nonGolfGames.length) * 100).toFixed(1) 
+        : '0.0';
+
+    const totalGames = allGames.length;           // includes golf
+    const seasonStr = `${currentSeasonName()} Season • ${seasonLabel(state.activeSeason)} ${state.activeTeam}`;
+    
     panel.innerHTML = `
     <div class="nav-header">
         <div class="nav-header-logo">
@@ -1077,19 +1089,19 @@ function renderHome() {
       <div class="season-summary">
         <div class="season-label">${seasonStr}</div>
         <div class="stat-cards-row">
-          <div class="stat-card">
-            <div class="label">Win %</div>
-            <div class="value">${winPct}%</div>
-          </div>
-          <div class="stat-card">
-            <div class="label">Record</div>
-            <div class="value">${wins} – ${losses}</div>
-          </div>
-          <div class="stat-card">
-            <div class="label">Games</div>
-            <div class="value">${games.length}</div>
-          </div>
-        </div>
+  <div class="stat-card">
+    <div class="label">Win %</div>
+    <div class="value">${winPct}%</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Record</div>
+    <div class="value">${wins} – ${losses}</div>
+  </div>
+  <div class="stat-card">
+    <div class="label">Games</div>
+    <div class="value">${totalGames}</div>
+  </div>
+</div>
       </div>
 
       <div class="section-title">Recent Activity</div>
