@@ -2222,7 +2222,6 @@ function openEditGolfScorecard(gameId) {
         saveBtn.disabled = false;
         saveBtn.onclick = () => {
             const opponent = document.getElementById('ag-opponent').value.trim() || 'Round';
-            const isWin    = document.getElementById('ag-win').checked;
             const dateVal  = document.getElementById('ag-date').value;
             const date     = dateVal ? new Date(dateVal + 'T12:00:00') : new Date();
 
@@ -2390,7 +2389,6 @@ function openGolfScorecard(sport) {
         saveBtn.disabled = false;
         saveBtn.onclick = () => {
             const opponent = document.getElementById('ag-opponent').value.trim() || 'Round';
-            const isWin    = document.getElementById('ag-win').checked;
             const dateVal  = document.getElementById('ag-date').value;
             const date     = dateVal ? new Date(dateVal + 'T12:00:00') : new Date();
 
