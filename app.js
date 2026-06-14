@@ -690,10 +690,9 @@ function getIcon(sport) {
         'Lacrosse':      '<i class="fi fi-rr-lacrosse-stick-ball"></i>',
         'Softball':      '<i class="fi fi-rr-baseball-alt"></i>',
         'Swim & Dive Girls': '<i class="fi fi-rr-swimmer"></i>',
-        'Cheerleading':  '',
+        'Cheerleading':  '<i class="fi fi-rr-medal"></i>',
         'Dance':         '<i class="fi fi-rr-ballet-dance"></i>',
     };
-
     return icons[sport] || '';
 }
 
@@ -1053,9 +1052,10 @@ function getFilteredGames(sport, filterSeason, filterTeam) {
 function renderHome() {
     const panel = document.getElementById('panel-home');
     const games = state.allGames.filter(g => state.selectedSports.has(g.sport)).sort((a,b) => b.date - a.date);
-    const wins   = games.filter(g => g.isWin).length;
-    const losses = games.length - wins;
-    const winPct = games.length ? ((wins / games.length) * 100).toFixed(1) : '0.0';
+    const recordGames = games.filter(g => g.sport !== 'Boys Golf' && g.sport !== 'Girls Golf');
+    const wins   = recordGames.filter(g => g.isWin).length;
+    const losses = recordGames.length - wins;
+    const winPct = recordGames.length ? ((wins / recordGames.length) * 100).toFixed(1) : '0.0';
     const seasonStr = `${currentSeasonName()} Season • ${seasonLabel(state.activeSeason)} ${state.activeTeam}`;
 
     panel.innerHTML = `
@@ -1096,19 +1096,23 @@ function renderHome() {
 
       ${games.length === 0
         ? `<div class="empty-state">No activity yet. Add a sport and log a game to get started!</div>`
-        : `<div class="activity-list">${games.map(g => `
+        : `<div class="activity-list">${games.map(g => {
+            const isGolf = g.sport === 'Boys Golf' || g.sport === 'Girls Golf';
+            const resultLabel = isGolf ? 'Played' : (g.isWin ? 'Won' : 'Lost');
+            return `
             <div class="activity-row" onclick="openGameDetail('${g.id}')">
               <div class="activity-icon">${getIcon(g.sport)}</div>
               <div class="activity-info">
                 <div class="activity-sport">${g.sport}</div>
-                <div class="activity-desc">${g.isWin ? 'Won' : 'Lost'} ${g.yourScore}-${g.opponentScore} vs ${g.opponent}</div>
+                <div class="activity-desc">${resultLabel} ${g.yourScore}-${g.opponentScore} vs ${g.opponent}</div>
                 <div class="activity-detail">${g.team} ${seasonLabel(g.season)}</div>
               </div>
               <div class="activity-meta">
                 <div class="activity-date">${formatDate(g.date)}</div>
                 <div class="activity-chevron">›</div>
               </div>
-            </div>`).join('')}</div>`
+            </div>`;
+        }).join('')}</div>`
     }
     </div>
   `;
@@ -1125,7 +1129,7 @@ function renderSports() {
         return `
       <div class="sport-row" onclick="${state.selectedSports.has(sport) ? `openSportSetup('${sport}')` : `toggleSport('${sport}')`}">
         <span class="sport-row-name">
-            ${getIcon(sport)} ${sport}
+            ${sport}
             ${state.selectedSports.has(sport) && state.sportConfig[sport] ? `
                 <span style="display:block;font-size:11px;color:var(--text-secondary);margin-top:2px;">
                     ${state.sportConfig[sport].positions.length > 0
@@ -1297,7 +1301,7 @@ function renderStats() {
     const sportPills = sports.length > 0
         ? `<div class="sport-pills-row">${sports.map(s => `
         <button class="pill-btn ${state.currentSport === s ? 'active' : ''}" onclick="setCurrentSport('${s}')">
-          ${getIcon(s)} ${s}
+          ${s}
         </button>`).join('')}</div>` : '';
 
     // Dashboard content
@@ -1328,8 +1332,9 @@ function renderStats() {
 }
 
 function renderDashboard(sport, filteredGames, filterTitle) {
-    const wins   = filteredGames.filter(g => g.isWin).length;
-    const losses = filteredGames.filter(g => !g.isWin).length;
+    const isGolf = sport === 'Boys Golf' || sport === 'Girls Golf';
+    const wins   = isGolf ? 0 : filteredGames.filter(g => g.isWin).length;
+    const losses = isGolf ? 0 : filteredGames.filter(g => !g.isWin).length;
     const agg    = aggregateStats(filteredGames, sport);
     const inputMappings = getInputStats(sport);
 
@@ -1452,9 +1457,8 @@ function renderDashboard(sport, filteredGames, filterTitle) {
       <div class="activity-list">
         ${filteredGames.map(g => `
           <div class="activity-row" onclick="openGameDetail('${g.id}')">
-            <div class="activity-icon">${getIcon(g.sport)}</div>
             <div class="activity-info">
-              <div class="activity-sport">${g.isWin ? '✅' : '❌'} vs ${g.opponent}</div>
+              <div class="activity-sport">${isGolf ? '⛳' : (g.isWin ? '✅' : '❌')} vs ${g.opponent}</div>
               <div class="activity-desc">${g.yourScore}–${g.opponentScore} · ${g.team}</div>
               <div class="activity-detail">${formatDate(g.date)}</div>
             </div>
@@ -1669,7 +1673,7 @@ function renderProfile() {
             const positions = config && config.positions.length > 0
                 ? config.positions.join(' / ') : '';
             return `<div class="profile-sport-chip">
-            ${getIcon(sport)} ${sport}
+            ${sport}
             ${positions ? `<span class="profile-sport-chip-positions">${positions}</span>` : ''}
         </div>`;
         }).join('')}
@@ -1757,6 +1761,7 @@ function renderProfile() {
 function openGameDetail(gameId) {
     const game = state.allGames.find(g => g.id === gameId);
     if (!game) return;
+    const isGolf = game.sport === 'Boys Golf' || game.sport === 'Girls Golf';
 
     const allStats = { ...game.gameStats, ...calculateDerivedStats(game.sport, game.gameStats) };
     const mappings = getStatMappings(game.sport);
@@ -1812,10 +1817,12 @@ function openGameDetail(gameId) {
     </div>`).join('');
 
     document.getElementById('detail-title').textContent = game.sport;
+    const resultHTML = isGolf
+        ? `<div class="detail-result" style="color:var(--text-secondary);">Round Recorded</div>`
+        : `<div class="detail-result ${game.isWin ? 'win' : 'loss'}">${game.isWin ? 'Victory' : 'Tough Loss'}</div>`;
     document.getElementById('detail-body').innerHTML = `
     <div class="detail-hero">
-      <div class="detail-sport-icon">${getIcon(game.sport)}</div>
-      <div class="detail-result ${game.isWin ? 'win' : 'loss'}">${game.isWin ? 'Victory' : 'Tough Loss'}</div>
+      ${resultHTML}
       <div class="detail-score-row">
         <div class="detail-score-team">
           <div class="detail-score-num">${game.yourScore}</div>
@@ -1880,16 +1887,10 @@ function openAddGame(sport) {
         <input id="ag-opponent" class="form-input wide" type="text" placeholder="Opponent name" />
       </div>
       <div class="form-row">
-        <label>Date</label>
-        <input id="ag-date" class="form-input" type="date" value="${new Date().toISOString().slice(0,10)}" style="width:140px;" />
-      </div>
-      <div class="form-row">
-        <label>Win</label>
-        <label class="form-toggle">
-          <input id="ag-win" type="checkbox" />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
+            <label>Date</label>
+            <input id="ag-date" class="form-input" type="date" value="${new Date().toISOString().slice(0,10)}" style="width:140px;" />
+          </div>
+        </div>
     </div>
     <div class="form-section">
       <div class="form-section-title">Score</div>
@@ -2098,13 +2099,6 @@ function openEditGolfScorecard(gameId) {
             <input id="ag-date" class="form-input" type="date"
               value="${game.date.toISOString().slice(0,10)}" style="width:140px;" />
           </div>
-          <div class="form-row">
-            <label>Win</label>
-            <label class="form-toggle">
-              <input id="ag-win" type="checkbox" ${game.isWin ? 'checked' : ''} />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
         </div>
 
         <div class="form-section">
@@ -2220,7 +2214,7 @@ function openEditGolfScorecard(gameId) {
         saveBtn.disabled = false;
         saveBtn.onclick = () => {
             const opponent = document.getElementById('ag-opponent').value.trim() || 'Round';
-            const isWin    = document.getElementById('ag-win').checked;
+            const isWin    = false; // golf rounds aren't counted as wins/losses
             const dateVal  = document.getElementById('ag-date').value;
             const date     = dateVal ? new Date(dateVal + 'T12:00:00') : new Date();
 
@@ -2300,13 +2294,6 @@ function openGolfScorecard(sport) {
           <div class="form-row">
             <label>Date</label>
             <input id="ag-date" class="form-input" type="date" value="${new Date().toISOString().slice(0,10)}" style="width:140px;" />
-          </div>
-          <div class="form-row">
-            <label>Win</label>
-            <label class="form-toggle">
-              <input id="ag-win" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
           </div>
         </div>
 
@@ -2395,7 +2382,7 @@ function openGolfScorecard(sport) {
         saveBtn.disabled = false;
         saveBtn.onclick = () => {
             const opponent = document.getElementById('ag-opponent').value.trim() || 'Round';
-            const isWin    = document.getElementById('ag-win').checked;
+            const isWin    = false; // golf rounds aren't counted as wins/losses
             const dateVal  = document.getElementById('ag-date').value;
             const date     = dateVal ? new Date(dateVal + 'T12:00:00') : new Date();
 
