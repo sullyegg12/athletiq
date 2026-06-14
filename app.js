@@ -1178,7 +1178,7 @@ function openSportSetup(sport) {
     const positions = getPositions(sport);
 
     function renderSetup() {
-        document.getElementById('modal-title').textContent = `${getIcon(sport)} ${sport}`;
+        document.getElementById('modal-title').textContent = sport;
         document.getElementById('modal-body').innerHTML = `
         <div class="setup-section">
             <div class="setup-section-title">Active Years</div>
