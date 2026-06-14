@@ -669,7 +669,7 @@ function calculateDerivedStats(sport, stats) {
 function getIcon(sport) {
     const icons = {
         'Basketball':    '<i class="fi fi-rr-basketball"></i>',
-        'Football':      '<i class="fi fi-rr-football"></i>',
+        'Football':      '<i class="fi fi-rr-rugby"></i>',
         'Boys Soccer':   '<i class="fi fi-rr-football"></i>',
         'Girls Soccer':  '<i class="fi fi-rr-football"></i>',
         'Volleyball':    '<i class="fi fi-rr-volleyball"></i>',
