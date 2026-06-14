@@ -1242,10 +1242,10 @@ body.dark-mode table tr {
 }
 
 #global-settings-btn {
-    position: absolute;
-    top: 62px;
+    position: fixed;
+    top: calc(16px + env(safe-area-inset-top));
     right: 16px;
-    z-index: 50;
+    z-index: 150;
     font-size: 20px;
     color: var(--brand-navy);
     width: 36px;
@@ -1499,8 +1499,8 @@ body.dark-mode .goals-form-row {
 }
 
 .pr-toast {
-    position: absolute;
-    bottom: calc(var(--tab-height) + 16px);
+    position: fixed;
+    bottom: calc(var(--tab-height) + env(safe-area-inset-bottom) + 16px);
     left: 50%;
     transform: translateX(-50%);
     background: var(--brand-navy);
@@ -1565,8 +1565,8 @@ body.dark-mode .goals-form-row {
    PR TOAST (if not already present)
    =========================== */
 .pr-toast {
-    position: absolute;
-    bottom: calc(var(--tab-height) + 16px);
+    position: fixed;
+    bottom: calc(var(--tab-height) + env(safe-area-inset-bottom) + 16px);
     left: 50%;
     transform: translateX(-50%);
     background: var(--brand-navy);
