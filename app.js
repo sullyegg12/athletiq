@@ -1101,7 +1101,7 @@ function renderHome() {
               <div class="activity-icon">${getIcon(g.sport)}</div>
               <div class="activity-info">
                 <div class="activity-sport">${g.sport}</div>
-                <div class="activity-desc">${g.isWin ? 'Won' : 'Lost'} ${g.yourScore}-${g.opponentScore} vs ${g.opponent}</div>
+                <div class="activity-desc">${g.sport.includes('Golf') ? '' : (g.isWin ? 'Won ' : 'Lost ')}${g.yourScore}-${g.opponentScore} vs ${g.opponent}</div>
                 <div class="activity-detail">${g.team} ${seasonLabel(g.season)}</div>
               </div>
               <div class="activity-meta">
@@ -1329,11 +1329,11 @@ function renderStats() {
 
 function renderDashboard(sport, filteredGames, filterTitle) {
     const wins   = filteredGames.filter(g => g.isWin).length;
-    const losses = filteredGames.filter(g => !g.isWin).length;
+    const losses = filteredGames.length - wins;
     const agg    = aggregateStats(filteredGames, sport);
     const inputMappings = getInputStats(sport);
 
-    // Efficiency section
+    // Efficiency section (same as before)
     let effHTML = '';
     if (sport === 'Basketball') {
         effHTML = `
@@ -1389,7 +1389,7 @@ function renderDashboard(sport, filteredGames, filterTitle) {
       </div>`;
     }
 
-    // Personal Records block
+    // Personal Records block (same as before)
     const prs = state.personalRecords[sport] ?? {};
     const prEntries = Object.entries(prs).filter(([_, pr]) => pr.value > 0);
     let prHTML = '';
@@ -1412,7 +1412,7 @@ function renderDashboard(sport, filteredGames, filterTitle) {
         </div>`;
     }
 
-    // Per-game averages grid
+    // Averages grid (same as before)
     let avgGridHTML = '';
     if (sport === 'Boys Golf' || sport === 'Girls Golf') {
         avgGridHTML = [
@@ -1437,7 +1437,7 @@ function renderDashboard(sport, filteredGames, filterTitle) {
         }).join('');
     }
 
-    // Totals grid — skip calculated/derived stats, just raw accumulated totals
+    // Totals grid (same as before)
     const totalsGridHTML = inputMappings
         .filter(map => !map.isCalculated)
         .map(map => {
@@ -1445,7 +1445,7 @@ function renderDashboard(sport, filteredGames, filterTitle) {
             return statBox(map.totalLabel, v, 'color-blue');
         }).join('');
 
-    // Game history list
+    // Game history (same as before)
     const historyHTML = filteredGames.length === 0 ? '' : `
     <div style="padding: 0 16px 12px;">
       <div class="section-title" style="text-align:left; margin-bottom:10px;">Game History</div>
@@ -1454,28 +1454,37 @@ function renderDashboard(sport, filteredGames, filterTitle) {
           <div class="activity-row" onclick="openGameDetail('${g.id}')">
             <div class="activity-icon">${getIcon(g.sport)}</div>
             <div class="activity-info">
-              <div class="activity-sport">${g.isWin ? '✅' : '❌'} vs ${g.opponent}</div>
+              <div class="activity-sport">${g.sport.includes('Golf') ? '' : (g.isWin ? '✅ ' : '❌ ')}vs ${g.opponent}</div>
               <div class="activity-desc">${g.yourScore}–${g.opponentScore} · ${g.team}</div>
               <div class="activity-detail">${formatDate(g.date)}</div>
             </div>
             <div class="activity-meta" style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
-              <button onclick="event.stopPropagation(); openEditGame('${g.id}')"
-                    class="game-action-btn edit">Edit</button>
-                <button onclick="event.stopPropagation(); deleteGame('${g.id}', '${g.sport}')"
-                    class="game-action-btn delete">Delete</button>
+              <button onclick="event.stopPropagation(); openEditGame('${g.id}')" class="game-action-btn edit">Edit</button>
+              <button onclick="event.stopPropagation(); deleteGame('${g.id}', '${g.sport}')" class="game-action-btn delete">Delete</button>
             </div>
           </div>`).join('')}
       </div>
     </div>`;
 
+    // === GOLF FIX: record row ===
+    let recordHTML = '';
+    if (sport === 'Boys Golf' || sport === 'Girls Golf') {
+        recordHTML = `
+          <div class="dashboard-record-row">
+            ${statBox('Games', String(filteredGames.length), 'color-blue')}
+          </div>`;
+    } else {
+        recordHTML = `
+          <div class="dashboard-record-row">
+            ${statBox('Wins',   String(wins),   'color-green')}
+            ${statBox('Losses', String(losses), 'color-red')}
+            ${statBox('Games',  String(filteredGames.length), 'color-blue')}
+          </div>`;
+    }
+
     return `
     <div class="stats-filter-banner">${filterTitle}</div>
-    <div class="dashboard-wrap">
-      <div class="dashboard-record-row">
-        ${statBox('Wins',   String(wins),   'color-green')}
-        ${statBox('Losses', String(losses), 'color-red')}
-        ${statBox('Games',  String(filteredGames.length), 'color-blue')}
-      </div>
+    ${recordHTML}
       ${effHTML}
       ${prHTML}
       <div class="efficiency-block">
@@ -2098,13 +2107,6 @@ function openEditGolfScorecard(gameId) {
             <input id="ag-date" class="form-input" type="date"
               value="${game.date.toISOString().slice(0,10)}" style="width:140px;" />
           </div>
-          <div class="form-row">
-            <label>Win</label>
-            <label class="form-toggle">
-              <input id="ag-win" type="checkbox" ${game.isWin ? 'checked' : ''} />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
         </div>
 
         <div class="form-section">
@@ -2301,13 +2303,6 @@ function openGolfScorecard(sport) {
             <label>Date</label>
             <input id="ag-date" class="form-input" type="date" value="${new Date().toISOString().slice(0,10)}" style="width:140px;" />
           </div>
-          <div class="form-row">
-            <label>Win</label>
-            <label class="form-toggle">
-              <input id="ag-win" type="checkbox" />
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
         </div>
 
         <div class="form-section">
@@ -2423,9 +2418,16 @@ function openGolfScorecard(sport) {
             };
 
             const newGame = makeGame({
-                sport, opponent, yourScore: totalScore, opponentScore: totalPar,
-                isWin, date, gameStats, season: filterSeason, team: filterTeam,
-            });
+    sport, 
+    opponent, 
+    yourScore: totalScore, 
+    opponentScore: totalPar,
+    isWin: false,                    // ← ADD THIS
+    date, 
+    gameStats, 
+    season: filterSeason, 
+    team: filterTeam,
+});
             newGame.holes = played;  // save the raw hole data
 
             state.allGames.push(newGame);
