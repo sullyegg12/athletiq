@@ -1061,7 +1061,6 @@ function renderHome() {
     panel.innerHTML = `
     <div class="nav-header">
         <div class="nav-header-logo">
-            <img src="Images/Athletiq-Logo.PNG" class="brand-logo"/>
             <h1 style="font-size:32px;font-weight:900;color:var(--brand-navy);letter-spacing:-1px;">Athletiq</h1>
         </div>
     </div>
