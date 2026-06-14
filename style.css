@@ -874,13 +874,14 @@ body.dark-mode .setup-section-title {
    =========================== */
 #modal-overlay,
 #detail-overlay {
-    position: absolute;
+    position: fixed; /* Locks the background to the screen, stopping page scroll */
     inset: 0;
     background: rgba(0,0,0,0.45);
     z-index: 200;
     display: flex;
-    align-items: flex-end;
+    align-items: center; /* Changes it from popping up at the bottom to the middle */
     justify-content: center;
+    padding-bottom: 15vh; /* Bumps it up a bit higher than the exact center */
 }
 
 #modal-overlay.hidden,
@@ -891,10 +892,10 @@ body.dark-mode .setup-section-title {
 #modal-box,
 #detail-box {
     background: var(--surface);
-    width: 100%;
+    width: 90%; /* Adds a little breathing room on the sides for mobile */
     max-width: 480px;
-    max-height: 92dvh;
-    border-radius: 20px 20px 0 0;
+    max-height: 70dvh; /* Restricts the height so the inside becomes scrollable */
+    border-radius: 20px; /* Rounds all 4 corners instead of just the top two */
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -1187,13 +1188,14 @@ body.dark-mode table tr {
    SETTINGS MODAL
    =========================== */
 #settings-overlay {
-    position: absolute;
+    position: fixed; /* Locks the background to the screen, stopping page scroll */
     inset: 0;
     background: rgba(0,0,0,0.45);
     z-index: 200;
     display: flex;
-    align-items: flex-end;
+    align-items: center; /* Changes it from popping up at the bottom to the middle */
     justify-content: center;
+    padding-bottom: 15vh; /* Bumps it up a bit higher than the exact center */
 }
 
 #settings-overlay.hidden {
@@ -1202,10 +1204,10 @@ body.dark-mode table tr {
 
 #settings-box {
     background: var(--surface);
-    width: 100%;
-    max-width: 100%;
-    max-height: 80%;
-    border-radius: 20px 20px 0 0;
+    width: 90%; /* Adds a little breathing room on the sides for mobile */
+    max-width: 480px;
+    max-height: 70dvh; /* Restricts the height so the inside becomes scrollable */
+    border-radius: 20px; /* Rounds all 4 corners instead of just the top two */
     display: flex;
     flex-direction: column;
     overflow: hidden;
