@@ -1886,10 +1886,16 @@ function openAddGame(sport) {
         <input id="ag-opponent" class="form-input wide" type="text" placeholder="Opponent name" />
       </div>
       <div class="form-row">
-            <label>Date</label>
-            <input id="ag-date" class="form-input" type="date" value="${new Date().toISOString().slice(0,10)}" style="width:140px;" />
-          </div>
-        </div>
+        <label>Date</label>
+        <input id="ag-date" class="form-input" type="date" value="${new Date().toISOString().slice(0,10)}" style="width:140px;" />
+      </div>
+      <div class="form-row">
+        <label>Win</label>
+        <label class="form-toggle">
+          <input id="ag-win" type="checkbox" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
     </div>
     <div class="form-section">
       <div class="form-section-title">Score</div>
