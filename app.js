@@ -198,6 +198,7 @@ const state = {
         defaultTeam:      'Varsity',
     },
     personalRecords: {},
+    achievements: [],
     seasonGoals: []
 };
 
@@ -231,6 +232,7 @@ function loadState() {
         state.profile        = { ...state.profile, ...(saved.profile ?? {}) };
         state.settings       = { ...state.settings, ...(saved.settings ?? {}) };
         state.seasonGoals    = saved.seasonGoals    ?? [];
+        state.achievements   = saved.achievements   ?? [];
         state.personalRecords = saved.personalRecords ?? {};
     } catch (e) {
         console.warn('Failed to load saved state:', e);
@@ -1416,6 +1418,55 @@ function renderDashboard(sport, filteredGames, filterTitle) {
         </div>`;
     }
 
+    // Achievements block
+    const sportAchievements = state.achievements.filter(a => a.sport === sport);
+    const achievementsHTML = `
+    <div class="efficiency-block">
+        <h3>🏅 Achievements</h3>
+        ${sportAchievements.length === 0
+        ? `<p style="font-size:13px;color:var(--text-secondary);margin:0;">No achievements yet — add your first one below.</p>`
+        : `<div class="activity-list">
+                ${sportAchievements.map(a => `
+                <div class="activity-row" style="cursor:default;">
+                    <div class="activity-info">
+                        <div class="activity-sport">${a.title}</div>
+                        ${a.description ? `<div class="activity-desc">${a.description}</div>` : ''}
+                        <div class="activity-detail">${a.date
+            ? new Date(a.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+            : ''}</div>
+                    </div>
+                    <div class="activity-meta" style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+                        <button class="game-action-btn ${a.showOnProfile ? 'edit' : ''}"
+                            style="${!a.showOnProfile ? 'color:var(--text-secondary);background:var(--secondary-bg);' : ''}"
+                            onclick="toggleAchievementProfile('${a.id}')">
+                            ${a.showOnProfile ? '👤 On' : '👤 Off'}
+                        </button>
+                        <button class="game-action-btn delete" onclick="deleteAchievement('${a.id}')">Delete</button>
+                    </div>
+                </div>`).join('')}
+               </div>`}
+        <div class="goals-form-row" style="flex-direction:column;gap:8px;">
+            <input id="ach-title" class="goal-input-text" style="width:100%;" type="text" placeholder="Title  (e.g. Regional Champions, MVP)" />
+            <input id="ach-desc" class="goal-input-text" style="width:100%;" type="text" placeholder="Description (optional)" />
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <input id="ach-date" class="goal-input-text" style="width:130px;" type="date"
+                    value="${new Date().toISOString().slice(0, 10)}" />
+                <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--text-secondary);cursor:pointer;">
+                    <input type="checkbox" id="ach-profile" checked
+                        style="width:14px;height:14px;accent-color:var(--brand-blue);" />
+                    Show on Profile
+                </label>
+                <button class="goal-add-btn" onclick="addAchievement(
+                    '${sport}',
+                    document.getElementById('ach-title').value,
+                    document.getElementById('ach-desc').value,
+                    document.getElementById('ach-date').value,
+                    document.getElementById('ach-profile').checked
+                )">Add</button>
+            </div>
+        </div>
+    </div>`;
+
     // Per-game averages grid
     let avgGridHTML = '';
     if (sport === 'Boys Golf' || sport === 'Girls Golf') {
@@ -1481,6 +1532,7 @@ function renderDashboard(sport, filteredGames, filterTitle) {
       </div>
       ${effHTML}
       ${prHTML}
+      ${achievementsHTML}
       <div class="efficiency-block">
         <h3>Averages</h3>
         <div class="avg-grid">${avgGridHTML}</div>
@@ -1514,6 +1566,38 @@ function addSeasonGoal(statName, targetValue) {
 function deleteSeasonGoal(goalId) {
     state.seasonGoals = state.seasonGoals.filter(g => g.id !== goalId);
     renderAll();
+}
+// =============================================================================
+//  MARK: - Achievements
+// =============================================================================
+function addAchievement(sport, title, description, date, showOnProfile) {
+    if (!title || !title.trim()) return;
+    state.achievements.push({
+        id: uuid(),
+        sport,
+        title: title.trim(),
+        description: (description || '').trim(),
+        date: date || new Date().toISOString().slice(0, 10),
+        showOnProfile: showOnProfile,
+    });
+    saveState();
+    renderAll();
+}
+
+function deleteAchievement(id) {
+    if (!confirm('Delete this achievement?')) return;
+    state.achievements = state.achievements.filter(a => a.id !== id);
+    saveState();
+    renderAll();
+}
+
+function toggleAchievementProfile(id) {
+    const a = state.achievements.find(a => a.id === id);
+    if (a) {
+        a.showOnProfile = !a.showOnProfile;
+        saveState();
+        renderAll();
+    }
 }
 
 /** Generates clean structural layout for active seasonal targets */
@@ -1677,6 +1761,22 @@ function renderProfile() {
         </div>`;
         }).join('')}
 </div>` : ''}`}
+        ${(() => {
+        const profileAchievements = state.achievements.filter(a => a.showOnProfile);
+        if (profileAchievements.length === 0) return '';
+        return `
+            <div class="profile-sports-row" style="flex-direction:column;align-items:stretch;gap:6px;margin-top:8px;">
+                <div style="font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.6px;text-align:center;">🏅 Achievements</div>
+                ${profileAchievements.map(a => `
+                <div class="activity-row" style="cursor:default;padding:10px 12px;">
+                    <div class="activity-info">
+                        <div class="activity-sport">${a.title}</div>
+                        ${a.description ? `<div class="activity-desc">${a.description}</div>` : ''}
+                    </div>
+                    <div class="profile-sport-chip" style="flex-shrink:0;">${a.sport}</div>
+                </div>`).join('')}
+            </div>`;
+    })()}
         <button class="edit-toggle-btn" onclick="toggleProfileEdit()">
           ${ed ? '✓ Done' : '️Edit Profile'}
         </button>
