@@ -2920,14 +2920,15 @@ function setCurrentSport(sport) {
 
 
 function setActiveSeason(yr) {
-   state.activeSeason = parseInt(yr);
-   renderAll();
+    state.activeSeason = parseInt(yr);
+    saveState();
+    renderAll();
 }
 
-
 function setActiveTeam(team) {
-   state.activeTeam = team;
-   renderAll();
+    state.activeTeam = team;
+    saveState();
+    renderAll();
 }
 
 
