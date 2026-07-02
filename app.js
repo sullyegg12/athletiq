@@ -2920,8 +2920,10 @@ function setCurrentSport(sport) {
 
 
 function setActiveSeason(yr) {
+    console.log('setActiveSeason called with', yr);
     state.activeSeason = parseInt(yr);
     saveState();
+    console.log('saved:', localStorage.getItem('athletiq_state'));
     renderAll();
 }
 
